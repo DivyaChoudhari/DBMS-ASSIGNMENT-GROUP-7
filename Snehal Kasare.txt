@@ -1,0 +1,60 @@
+Snehal Kasare
+ROLL NO - 23112039
+ 
+SET-C
+
+1. 
+SELECT DISTINCT t.train_id, t.name
+FROM train t
+LEFT JOIN schedule s ON t.train_id = s.train_id AND s.date = '2023-10-10'
+WHERE s.schedule_id IS NULL;
+
+
+OUTPUT--
++----------+-------------------+
+| train_id | name              |
++----------+-------------------+
+|     2002 | Godavari Express  |
+|     2005 | Chennai Express   |
+|     2006 | Chennai Express   |
+|     2007 | goa express       |
+|     2008 | goa express       |
+|     2014 | Ratnachal Express |
+|     2015 | Rajdhani Express  |
+|     2016 | Rajdhani Express  |
+|     2018 | kranti express    |
+|     2019 | kranti express    |
++----------+-------------------+
+
+3.
+select r.*, count(s.route_id) from route r,schedule s where r.route_id =s.route_id  group by s.route_id order by count(route_id) desc limit 10;
+
+OUTPUT--
++----------+-----------+-------------+----------+-----------------------+-------------------+
+| route_id | start     | destination | distance | intermediate_stations | count(s.route_id) |
++----------+-----------+-------------+----------+-----------------------+-------------------+
+|     1801 | Mumbai    | Goa         |      600 |                     3 |                 9 |
+|     1812 | Bengaluru | Dharwad     |      700 |                     3 |                 5 |
+|     1811 | Dharwad   | Bengaluru   |      700 |                     3 |                 4 |
+|     1809 | Mumbai    | Kolkata     |     1000 |                     3 |                 3 |
+|     1802 | Goa       | Mumbai      |      600 |                     3 |                 2 |
+|     1810 | Kolkata   | Mumbai      |     1000 |                     3 |                 2 |
++----------+-----------+-------------+----------+-----------------------+-------------------+
+
+4.
+select * from passenger where id in ( select passenger_id from ticket_seat_passenger group by passenger_id having count(id)>2);
+
+OUTPUT--
+
++------+----------+------+----------------+
+| id   | name     | age  | type           |
++------+----------+------+----------------+
+| 1601 | Nachiket |   10 | Child          |
+| 1602 | Nitin    |   25 | Adult          |
+| 1603 | Manas    |   30 | Adult          |
+| 1606 | Nilkanth |   67 | Senior_Citizen |
+| 1609 | Sarita   |   67 | Senior_Citizen |
+| 1616 | Manav    |   68 | Senior_Citizen |
+| 1619 | Yogesh   |   69 | Senior_Citizen |
+| 1627 | Rakesh   |   70 | Senior_Citizen |
++------+----------+------+----------------+
