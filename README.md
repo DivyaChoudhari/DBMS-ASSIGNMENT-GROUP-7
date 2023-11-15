@@ -4,8 +4,8 @@ CS 105 Persistent Data Management
 2023-24
 This assignment has been done by:
 Divya Choudhari  - 23112007
-Nikita Mane         - 23112023
-Snehal Kasare      - 23112039
+Nikita Mane      - 23112023
+Snehal Kasare    - 23112039
 
 
 Entity Relationship Diagram: has been made By Nikita Mane
