@@ -13,24 +13,6 @@ Schema and Normalisation:Divya Choudhari
 Data : Nikita Mane ,Snehal Kasare,Divya Choudhari
 Readme File:Divya Choudhari
 
-coach_train is a many-to-one relationship with train.
-delay_replace is a one-to-many relationship with train.
-driver is a one-to-many relationship with train.
-intermediatestations is a many-to-many relationship with train.
-maintenance is a one-to-many relationship with train.
-passenger is a many-to-many relationship with ticket.
-passenger is a one-to-many relationship with ticket_seat_passenger.
-route is a one-to-many relationship with train.
-schedule is a one-to-many relationship with train.
-seat_coach is a many-to-one relationship with coach_train.
-seat_coach is a one-to-many relationship with ticket_seat_passenger.
-stations is a many-to-many relationship with train.
-ticket is a one-to-many relationship with ticket_seat_passenger.
-ticket_seat_passenger is a many-to-one relationship with seat_coach.
-ticket_seat_passenger is a one-to-one relationship with passenger.
-train is a one-to-many relationship with train_opdays.
-train_opdays is a one-to-many relationship with travel_agent.
-
 Additional Notes:
 
 The coach_train entity stores information about the coaches on a train.
@@ -46,12 +28,12 @@ The ticket entity stores information about train tickets.
 The ticket_seat_passenger entity stores information about the passengers who have booked tickets for a particular train seat.
 The train entity stores information about trains.
 The train_opdays entity stores information about the days that a train is operated.
-The travel_agent entity stores information about travel agents
-
-
-
-
-
+The travel_agent entity stores information about travel agents.
+Assumptions:
+1.1 train operates on s single route while 1 route may have multiple trains at different time.
+2. Coaches for a train are fixed to a particular train.
+3.1 ticket is for 1 seat and for 1 passenger
+4.Seats are fixed to a coach
 
 CREATE COMMANDS:
 1.create table delay_replace(schedule int,delay_time int,replacement_id int);
@@ -69,6 +51,7 @@ CREATE COMMANDS:
 13.create table maintenance(maintain_id primary key,coach_id int,previous_date date,next_due date);
 14.create table schedule(schedule_id int primary key,train_id int,route_id int,date date,driver_id int,codriver_id int,start_time time ,reach_time time);
 15.create table train_opdays(train_id int,operating_days varchar(20));
+
 Insert statements:
 1.mysql> load data local infile '/home/divya/Desktop/Passenger.csv' into table passenger fields terminated by ',' enclosed by '"' lines terminated by '\n' ignore 1 lines;
 2. mysql> load data local infile '/home/divya/Desktop/Ticket_seat_passenger.csv' into table ticket_seat_passenger fields terminated by ',' enclosed by '"' lines terminated by '\n' ignore 1 lines;
