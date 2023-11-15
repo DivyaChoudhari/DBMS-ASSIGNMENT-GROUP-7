@@ -1,0 +1,85 @@
+Nikita Mane
+23112013
+
+
+Set B
+
+Q3.List all agents, in descending order of percentage of confirmed booking each trip in the month of October this year. Include agent and route information in your result.
+
+ SELECT
+    ->     r.route_id,
+    ->     r.start AS start_station,
+    ->     r.destination AS destination_station,
+    ->     COUNT(tsp.ticket_id) AS total_seats_sold,
+    ->     SUM(CASE WHEN p.type = 'Child' THEN 1 ELSE 0 END) AS child_seats_sold,
+    ->     SUM(CASE WHEN p.type = 'Adult' THEN 1 ELSE 0 END) AS adult_seats_sold,
+    ->     SUM(CASE WHEN p.type = 'Senior Citizen' THEN 1 ELSE 0 END) AS senior_citizen_seats_sold
+    -> FROM
+    ->     route r
+    -> JOIN
+    ->     train tc ON r.route_id = tc.route_id
+    -> JOIN
+    ->     schedule s ON tc.train_id = s.train_id
+    -> JOIN
+    ->     ticket tkt ON s.schedule_id = tkt.schedule_id
+    -> JOIN
+    ->     ticket_seat_passenger tsp ON tkt.ticket_id = tsp.ticket_id
+    -> JOIN
+    ->     passenger p ON tsp.passenger_id = p.id
+    -> WHERE
+    ->     MONTH(tsp.booking_date) = 10  -- October
+    ->     AND YEAR(tsp.booking_date) = 2023
+    -> GROUP BY
+    ->     r.route_id, r.start, r.destination
+    -> ORDER BY
+    ->     total_seats_sold DESC;
++----------+---------------+---------------------+------------------+------------------+------------------+---------------------------+
+| route_id | start_station | destination_station | total_seats_sold | child_seats_sold | adult_seats_sold | senior_citizen_seats_sold |
++----------+---------------+---------------------+------------------+------------------+------------------+---------------------------+
+|     1801 | Mumbai        | Goa                 |                6 |                2 |                1 |                         0 |
+|     1810 | Kolkata       | Mumbai              |                3 |                2 |                0 |                         0 |
+|     1802 | Goa           | Mumbai              |                2 |                0 |                0 |                         0 |
+|     1809 | Mumbai        | Kolkata             |                1 |                0 |                0 |                         0 |
++----------+---------------+---------------------+------------------+------------------+------------------+---------------------------+
+
+Q4.Display the details of the routes where majority of bookings are not made by agents.
+
+SELECT
+    ->     r.route_id,
+    ->     r.start AS start_station,
+    ->     r.destination AS destination_station,
+    ->     COUNT(tsp.travelagent_id IS NULL OR NULL) / COUNT(*) * 100 AS percentage_bookings_not_by_agents
+    -> FROM
+    ->     route r
+    -> JOIN
+    ->     schedule s ON r.route_id = s.route_id
+    -> JOIN
+    ->     ticket t ON s.schedule_id = t.schedule_id
+    -> JOIN
+    ->     ticket_seat_passenger tsp ON t.ticket_id = tsp.ticket_id
+    -> GROUP BY
+    ->     r.route_id, r.start, r.destination
+    -> HAVING
+    ->     COUNT(tsp.travelagent_id IS NULL OR NULL) / COUNT(*) > 0.5;
++----------+---------------+---------------------+-----------------------------------+
+| route_id | start_station | destination_station | percentage_bookings_not_by_agents |
++----------+---------------+---------------------+-----------------------------------+
+|     1802 | Goa           | Mumbai              |                           66.6667 |
++----------+---------------+---------------------+-----------------------------------+
+
+Q5.Display the details of the agents who have made maximum commission in the Month of September.
+
+SELECT ta.travelagent_id, ta.name AS agent_name,
+    ->        SUM(tsp.commission) AS total_commission
+    -> FROM travel_agent ta
+    -> JOIN ticket_seat_passenger tsp ON ta.travelagent_id = tsp.travelagent_id
+    -> WHERE MONTH(tsp.booking_date) = 9  -- September
+    ->   AND YEAR(tsp.booking_date) = 2023
+    -> GROUP BY ta.travelagent_id, ta.name
+    -> ORDER BY total_commission DESC
+    -> LIMIT 1;
++----------------+------------+------------------+
+| travelagent_id | agent_name | total_commission |
++----------------+------------+------------------+
+|           5101 | Shashikant |              347 |
++----------------+------------+------------------+
