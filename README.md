@@ -12,6 +12,7 @@ Entity Relationship Diagram: has been made By Nikita Mane
 Schema and Normalisation:Divya Choudhari
 Data : Nikita Mane ,Snehal Kasare,Divya Choudhari
 Readme File:Divya Choudhari
+
 Note:-
 Since Data has been inserted manually so there are limited data enteries.
 Entity relationship diagram has been submitted in a different file.
@@ -32,6 +33,7 @@ The ticket_seat_passenger entity stores information about the passengers who hav
 The train entity stores information about trains.
 The train_opdays entity stores information about the days that a train is operated.
 The travel_agent entity stores information about travel agents.
+
 Assumptions:
 1. 1 train operates on s single route while 1 route may have multiple trains at different time.
 2. Coaches for a train are fixed to a particular train.
@@ -40,6 +42,7 @@ Assumptions:
 5.Data entries of the months of September,October and November are shown.
 6.ROute between A to B And B to A are considered different.
 7.When a train gets delayed by more than 30 min that it is replaced by a standby train
+
 CREATE COMMANDS:
 1.create table delay_replace(schedule int,delay_time int,replacement_id int);
 2.create table driver(driver_id int primary key,first_name varchar(20),last_name varchar(20),residence varchar(25),rest_day varchar(25));
