@@ -1,0 +1,51 @@
+﻿Assignment
+CS 105 Persistent Data Management
+2023-24
+PART 2
+Set A
+    1. Show all trains information travelling between Goa Mumbai and Ajmer-Lonavala where at least half the coaches are due for maintenance on or before 30 November this year.
+
+Solution:
+
+  select * from train where train_id=any(select train_id from coach_train where coach_train.coach_id=any(select coach_id from maintenance where next_due<='2023-11-30' AND maintenance.coach_id=any(select coach_id from coach_train where coach_train.train_id=any(select train_id from train where train.route_id=any(select route_id from route where start IN('Goa','Ajmer'))))));
++----------+------------------+---------------+----------+
+| train_id | name             | no_of_coaches | route_id |
++----------+------------------+---------------+----------+
+|     2002 | Godavari Express |             5 |     1802 |
++----------+------------------+---------------+----------+
+
+
+
+
+    2. List all the routes in descending order of seats sold, including route information and distribution of seats sold (Children, Adult, Senior Citizen) in the month of October this year.
+    3. List all agents’ information with more than 10 confirmed bookings in the month of September this year.
+
+Solution:
+select t.travelagent_id,count(t.ticket_id) from travel_agent inner join ticket_seat_passenger t on travel_agent.travelagent_id=t.travelagent_id  where confirm_status='Yes' group by travel_agent.travelagent_id having count(t.ticket_id)>10;
++----------------+--------------------+
+| travelagent_id | count(t.ticket_id) |
++----------------+--------------------+
+|           5101 |                 13 |
++----------------+--------------------+
+
+
+       4.Display the details of the route most travelled by Senior Citizens.
+
+
+       5.Display the details of the route where a train was always on time.
+
+Solution:
+
+select * from route where route_id=any(select route_id from schedule where schedule_id=any(select schedule from delay_replace where delay_time=0));
+
+
+
++----------+-----------+-------------+----------+-----------------------+
+| route_id | start     | destination | distance | intermediate_stations |
++----------+-----------+-------------+----------+-----------------------+
+|     1801 | Mumbai    | Goa         |      600 |                     3 |
+|     1809 | Mumbai    | Kolkata     |     1000 |                     3 |
+|     1810 | Kolkata   | Mumbai      |     1000 |                     3 |
+|     1811 | Dharwad   | Bengaluru   |      700 |                     3 |
+|     1812 | Bengaluru | Dharwad     |      700 |                     3 |
++----------+-----------+-------------+----------+-----------------------+
