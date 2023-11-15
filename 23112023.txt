@@ -1,0 +1,50 @@
+﻿Name : Nikita Yuvraj Mane 
+Roll No.: 23112023
+Set B 
+Question 1:  Show schedule of all trips including main driver information for 10th October this year. 
+
+Solution : SELECT s.Schedule_Id, t.Train_Id, t.Train_Name AS Train_Name, r.Route_Id, r.Start AS start_station,  r.Destination AS destination_station, s.Date, s.Start_time, s.Reach_time,  d.Driver_Id AS Driver_Id , d.First_Name AS Driver_First_Name,    d.Last_Name AS Driver_Last_Name FROM    schedule s,  train t , routes r , driver d WHERE  s.Train_Id = t.Train_Id   and s.Route_Id = r.Route_Id and s.Driver_Id = d.Driver_Id and    s.Date = '2023-10-10';
+
+Question 2: List all coaches with mileage between 4000 and 4999 km covered for september this year include information on the coach, its last service date and total number of scheduled trips
+
+Solution: 
+
+
+Question 3:  List all agents, in descending order of percentage of confirmed booking each trip in the month of October this year. Include agent and route information in your result.
+
+Solution: select Travelagent.Travelagent_Id, Travelagent.Travelagent_Name, Routes.Route_Id,Routes.Route_Name, SUM(count(ticket.confirmation_sation = Yes))*100.0/Count(ticket.Ticket_Id) As Percentage_Confirmed from travelagents join tickets ON  travelagent.Travelagent_Id=tickets.Travelagent_id join routes ON tickets.route_Id=routes.Route_Id where Extract(month from tickets.booking_date)=10 AND Extract(Year from tickets.booking_date)=Extract(year from current_date) Group By TravelAgents.TravelAgent_Id,Routes.Routes_Id Order by percentage_Confirmed DESC;
+
+
+Question 4: Display the details of the routes where majority of bookings are not made by agents.
+
+Solution: SELECT
+    r.route_id,
+    r.start AS start_station,
+    r.destination AS destination_station,
+    COUNT(tsp.travelagent_id IS NULL OR NULL) / COUNT(*) * 100 AS percentage_bookings_not_by_agents
+FROM
+    route r
+JOIN
+    schedule s ON r.route_id = s.route_id
+JOIN
+    ticket t ON s.schedule_id = t.schedule_id
+JOIN
+    ticket_seat_passenger tsp ON t.ticket_id = tsp.ticket_id
+GROUP BY
+    r.route_id, r.start, r.destination
+HAVING
+    COUNT(tsp.travelagent_id IS NULL OR NULL) / COUNT(*) > 0.5;
+
+
+Question 5:Display the details of the agents  who have made maximum commission in the Month of 
+September.
+
+Solution:SELECT ta.travelagent_id, ta.travelagnet_name AS agent_name, 
+       SUM(tsp.commission) AS total_commission
+FROM travel_agent ta
+JOIN ticket_seat_passenger tsp ON ta.travelagent_id = tsp.travelagent_id
+WHERE MONTH(tsp.booking_date) = 9  -- September
+  AND YEAR(tsp.booking_date) = 2023
+GROUP BY ta.travelagent_id, ta.name
+ORDER BY total_commission DESC
+LIMIT 1;
