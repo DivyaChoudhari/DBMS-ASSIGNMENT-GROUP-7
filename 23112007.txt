@@ -3,11 +3,10 @@ CS 105 Persistent Data Management
 2023-24
 PART 2
 Set A
-    1. Show all trains information travelling between Goa Mumbai and Ajmer-Lonavala where at least half the coaches are due for maintenance on or before 30 November this year.
-
+    
+1. Show all trains information travelling between Goa Mumbai and Ajmer-Lonavala where at least half the coaches are due for maintenance on or before 30 November this year.
 Solution:
-
-  select * from train where train_id=any(select train_id from coach_train where coach_train.coach_id=any(select coach_id from maintenance where next_due<='2023-11-30' AND maintenance.coach_id=any(select coach_id from coach_train where coach_train.train_id=any(select train_id from train where train.route_id=any(select route_id from route where start IN('Goa','Ajmer'))))));
+select * from train where train_id=any(select train_id from coach_train where coach_train.coach_id=any(select coach_id from maintenance where next_due<='2023-11-30' AND maintenance.coach_id=any(select coach_id from coach_train where coach_train.train_id=any(select train_id from train where train.route_id=any(select route_id from route where start IN('Goa','Ajmer'))))));
 +----------+------------------+---------------+----------+
 | train_id | name             | no_of_coaches | route_id |
 +----------+------------------+---------------+----------+
@@ -15,31 +14,50 @@ Solution:
 +----------+------------------+---------------+----------+
 
 
-
-
-    2. List all the routes in descending order of seats sold, including route information and distribution of seats sold (Children, Adult, Senior Citizen) in the month of October this year.
-    3. List all agents’ information with more than 10 confirmed bookings in the month of September this year.
-
+2. List all the routes in descending order of seats sold, including route information and distribution of seats sold (Children, Adult, Senior Citizen) in the month of October this year.       
 Solution:
-select t.travelagent_id,count(t.ticket_id) from travel_agent inner join ticket_seat_passenger t on travel_agent.travelagent_id=t.travelagent_id  where confirm_status='Yes' group by travel_agent.travelagent_id having count(t.ticket_id)>10;
-+----------------+--------------------+
-| travelagent_id | count(t.ticket_id) |
-+----------------+--------------------+
-|           5101 |                 13 |
-+----------------+--------------------+
+select p.type passenger_type,count(tp.seat_id) no_of_seats,r.* from ticket t  inner join schedule s  on t.schedule_id=s.schedule_id inner join ticket_seat_passenger tp on
+tp.ticket_id=t.ticket_id inner join passenger p on p.id=tp.passenger_id inner join route r on r.route_id=s.route_id where month(s.date)=10 group by s.route_id,p.type order by count(tp.seat_id) desc;
++----------------+-------------+----------+---------+-------------+----------+-----------------------+
+| passenger_type | no_of_seats | route_id | start   | destination | distance | intermediate_stations |
++----------------+-------------+----------+---------+-------------+----------+-----------------------+
+| Senior_Citizen |           4 |     1810 | Kolkata | Mumbai      |     1000 |                     3 |
+| Senior_Citizen |           3 |     1809 | Mumbai  | Kolkata     |     1000 |                     3 |
+| Senior_Citizen |           2 |     1801 | Mumbai  | Goa         |      600 |                     3 |
+| Child          |           2 |     1810 | Kolkata | Mumbai      |     1000 |                     3 |
+| Adult          |           2 |     1810 | Kolkata | Mumbai      |     1000 |                     3 |
+| Child          |           2 |     1809 | Mumbai  | Kolkata     |     1000 |                     3 |
+| Adult          |           1 |     1801 | Mumbai  | Goa         |      600 |                     3 |
+| Adult          |           1 |     1809 | Mumbai  | Kolkata     |     1000 |                     3 |
++----------------+-------------+----------+---------+-------------+----------+-----------------------+
 
 
-       4.Display the details of the route most travelled by Senior Citizens.
-
-
-       5.Display the details of the route where a train was always on time.
-
+3. List all agents’ information with more than 10 confirmed bookings in the month of September this year.
 Solution:
+select travel_agent.* from travel_agent inner join(select t2.travelagent_id from ticket_seat_passenger t2 where t2.confirm_status='Yes' and month(booking_date)=9 group by t2.travelagent_id having count(t2.travelagent_id)>10) as as1 on travel_agent.travelagent_id=as1.travelagent_id;
+  Empty set (0.01 sec)
 
+select travel_agent.* from travel_agent inner join(select t2.travelagent_id from ticket_seat_passenger t2 where t2.confirm_status='Yes' and month(booking_date)=9 group by t2.travelagent_id having count(t2.travelagent_id)>7) as as1 on travel_agent.travelagent_id=as1.travelagent_id;
++----------------+------------+
+| travelagent_id | name       |
++----------------+------------+
+|           5101 | Shashikant |
++----------------+------------+
+
+
+4.Display the details of the route most travelled by Senior Citizens.
+Solution:
+select r.*,count(tp.seat_id) no_of_seats from ticket_seat_passenger tp inner join ticket t on tp.ticket_id=t.ticket_id inner join schedule s on s.schedule_id=t.schedule_id inner join passenger p on p.id=tp.passenger_id  inner join route r on r.route_id=s.route_id where p.type='Senior_Citizen' group by r.route_id order by count(tp.seat_id) desc limit 1;
++----------+--------+-------------+----------+-----------------------+-------------+
+| route_id | start  | destination | distance | intermediate_stations | no_of_seats |
++----------+--------+-------------+----------+-----------------------+-------------+
+|     1801 | Mumbai | Goa         |      600 |                     3 |          14 |
++----------+--------+-------------+----------+-----------------------+-------------+
+
+
+5.Display the details of the route where a train was always on time.
+Solution:
 select * from route where route_id=any(select route_id from schedule where schedule_id=any(select schedule from delay_replace where delay_time=0));
-
-
-
 +----------+-----------+-------------+----------+-----------------------+
 | route_id | start     | destination | distance | intermediate_stations |
 +----------+-----------+-------------+----------+-----------------------+
