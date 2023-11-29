@@ -48,7 +48,7 @@ CREATE COMMANDS:
 2.create table driver(driver_id int primary key,first_name varchar(20),last_name varchar(20),residence varchar(25),rest_day varchar(25));
 3.create table travel_agent(travelagent_id int primary key,name varchar(20));
 4.create table passenger(id int primary key,name varchar(20),age int,type varchar(25));
-5.create table train(train_id int primary key,name varchar(20),no_of_coaches int,route_id int);
+5.create table train(train_id int primary key,name varchar(20),no_of_coaches int,route_id int,mileage int);
 6.create table route(route_id int primary key,start varchar(20),destination varchar(20),distance int,intermediate_stations int);
 7.create table seat_coach(seat_id int primary key,coach_id int);
 8.create table coach_train(coach_id int primary key,train_id int);
